@@ -1,13 +1,10 @@
 <template>
   <section class="hero">
     <MainHero />
-    <div v-if="isValid" class="hero-error">
-      <h2>Произошла ошибка!</h2>
-      <p>Возможно вы ввели некорректные данные</p>
-    </div>
     <form @submit.prevent class="form grid-row">
       <div class="form__content grid-row">
         <MyInput
+            :isValid="data.from.isValid"
             @onFrom="onFromHandler"
             class="form__item"
             type="text"
@@ -16,6 +13,7 @@
         </MyInput>
 
         <MyInput
+            :isValid="data.to.isValid"
             @onTo="onToHandler"
             type="text"
             text="To">
@@ -23,6 +21,7 @@
         </MyInput>
 
         <MyInput
+            :isValid="data.date.isValid"
             @onWhen="onWhenHandler"
             type="date"
             text="When">
@@ -33,7 +32,7 @@
       </div>
 
       <MyButton
-          @click="changeTicket"
+          @click="changeCode"
           class="form__button">
         Найти билеты
       </MyButton>
@@ -51,37 +50,62 @@ import {server} from "@/api/server";
 export default {
   components: {MainHero, MainSelect},
   setup() {
-    const isValid = ref(false)
     const data = ref({
-      from: '',
-      to: '',
-      date: '',
-      class: 0
+      from: {name: '', isValid: true},
+      to: {name: '', isValid: true},
+      date: {name: '', isValid: true},
+      tripClass: 0
     })
 
-    const valueSelect = (key) => data.value.class = key
-    const onFromHandler = (text) => data.value.from = text
-    const onToHandler = (text) => data.value.to = text
-    const onWhenHandler = (text) => data.value.date = text
+    const valueSelect = (key) => data.value.tripClass = key
+    const onFromHandler = (text) => {
+      data.value.from.name = text
+      data.value.from.isValid = true
+    }
+    const onToHandler = (text) => {
+      data.value.to.name = text
+      data.value.to.isValid = true
+    }
+    const onWhenHandler = (text) => {
+      data.value.date.name = text
+      data.value.date.isValid = true
+    }
 
-    const changeTicket = () => {
-      isValid.value = true
+    const changeCode = () => {
+      const {from, to, date, tripClass} = data.value
+
+      if (new Date(date.name) < new Date() || date.name === '') date.isValid = false
+
       server()
-          .getCodeCity(data.value.from, data.value.to)
-          .then((data) => {
-            isValid.value  = Object.entries(data).length === 0
-          })
-          .catch(isValid.value = true)
+        .getCodeCity(from.name, to.name)
+        .then(data => {
+          if(Object.entries(data).length !== 0) {
+            changeTicket(
+                data.origin.iata,
+                data.destination.iata,
+                date.name,
+                tripClass
+            )
+          } else {
+            from.isValid = false
+            to.isValid = false
+          }
+        })
+      }
+
+    const changeTicket = (fromCode, toCode, date, tripClass) => {
+      server()
+          .getTickets(fromCode, toCode, date, tripClass)
+          .then(data => console.log(data))
     }
 
     return {
       data,
-      isValid,
       valueSelect,
       onFromHandler,
       onToHandler,
       onWhenHandler,
-      changeTicket
+      changeCode
     }
   }
 }

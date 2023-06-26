@@ -1,5 +1,8 @@
 <template>
-  <label tabindex="1" class="label">
+  <label
+      class="label"
+      :class="{'label_error': !isValid}"
+  >
     <span class="label__text">
       <slot></slot>
     </span>
@@ -19,6 +22,9 @@ import './input.css'
 export default {
   name: 'MyInput',
   props: {
+    isValid: {
+      type: Boolean
+    },
     text: {
       type: [String, Number],
       required: true
@@ -30,11 +36,8 @@ export default {
 
   },
 
-  setup(props, contex) {
-    const onInput = (event) => {
-      contex.emit(`on${props.text}`, event.target.value)
-    }
-
+  setup(props, {emit}) {
+    const onInput = (event) => emit(`on${props.text}`, event.target.value)
     return {onInput}
   }
 }

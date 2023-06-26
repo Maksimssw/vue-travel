@@ -3,6 +3,18 @@
   background: var(--color-grey100);
 }
 
+.label_error:after {
+  content: 'error';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 2px 10px;
+  font-size: 14px;
+  color: var(--color-white);
+  background: var(--color-orange100);
+}
+
 .label__text {
   position: absolute;
   left: 20px;

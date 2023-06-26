@@ -1,6 +1,6 @@
-export const request = async (url) => {
+export const request = async (url, params) => {
   try {
-    const res = await fetch(url)
+    const res = await fetch(url, params)
 
     if (!res.ok) {
       throw new Error(`url: ${url}, status: ${res.status}`)
