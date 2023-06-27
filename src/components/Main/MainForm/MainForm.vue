@@ -96,7 +96,10 @@ export default {
     const changeTicket = (fromCode, toCode, date, tripClass) => {
       server()
           .getTickets(fromCode, toCode, date, tripClass)
-          .then(data => console.log(data))
+          .then(data => {
+            console.log(data);
+
+          })
     }
 
     return {
