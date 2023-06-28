@@ -1,6 +1,9 @@
 <template>
   <section class="hero">
     <MainHero />
+    <div class="grid-row justify-content-center">
+      <MySpinner v-if="loading"/>
+    </div>
     <form @submit.prevent class="form grid-row">
       <div class="form__content grid-row">
         <MyInput
@@ -56,6 +59,7 @@ export default {
       date: {name: '', isValid: true},
       tripClass: 0
     })
+    const loading = ref(false)
 
     const valueSelect = (key) => data.value.tripClass = key
     const onFromHandler = (text) => {
@@ -76,6 +80,7 @@ export default {
 
       if (new Date(date.name) < new Date() || date.name === '') date.isValid = false
 
+      loading.value = true
       server()
         .getCodeCity(from.name, to.name)
         .then(data => {
@@ -89,6 +94,7 @@ export default {
           } else {
             from.isValid = false
             to.isValid = false
+            loading.value = false
           }
         })
       }
@@ -98,12 +104,13 @@ export default {
           .getTickets(fromCode, toCode, date, tripClass)
           .then(data => {
             console.log(data);
-
+            loading.value = false
           })
     }
 
     return {
       data,
+      loading,
       valueSelect,
       onFromHandler,
       onToHandler,

@@ -1,5 +1,8 @@
 <template>
   <MainForm />
+  <div class="main">
+
+  </div>
 </template>
 
 <script>
@@ -9,3 +12,9 @@ export default {
   components: {MainForm}
 }
 </script>
+
+<style>
+.main {
+  grid-template-columns: 300px 1fr;
+}
+</style>
