@@ -14,7 +14,7 @@
       >
         <input type="radio" class="accordion__radio"/>
         <div class="accordion__circle"></div>
-        <span class="accordion__text">{{ item }}</span>
+        <span class="accordion__text">{{ item}}</span>
       </label>
     </div>
   </div>
